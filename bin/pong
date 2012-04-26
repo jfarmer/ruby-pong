@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-require 'pong'
+require 'ruby-pong'
 
 include Pong
 
@@ -39,24 +39,12 @@ player_paddle = Paddle.new do
     end  
   end
 
-  on_keypress Arcade::Keyboard::KeyD do    
-    if self.right < 400
-      move_right 10
-    end
-  end
-  
   on_keypress Arcade::Keyboard::KeyS do
     if self.bottom < 600
       move_down 10
     end
   end
 
-  on_keypress Arcade::Keyboard::KeyA do
-    if self.left > 0
-      move_left 10
-    end
-  end
-  
   on_collides_with Ball do |ball|
     ball.velocity = ball.velocity.reflect_horizontally
   end

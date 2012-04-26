@@ -1,5 +1,5 @@
 require 'arcade'
-require 'pong/version'
+require 'ruby-pong/version'
 
 module Pong
   class Paddle < Arcade::GameObject
