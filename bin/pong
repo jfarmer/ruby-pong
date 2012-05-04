@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'rubygems'
 require 'ruby-pong'
 
 include Pong
@@ -13,12 +12,12 @@ ball = Ball.new do
   set_y_position 200
 
   set_velocity Arcade::Velocity[5,7]
-  
+
   on_hit_edge do |edge|
     if edge == :top or edge == :bottom
       self.velocity = self.velocity.reflect_vertically
     end
-    
+
     if edge == :left or edge == :right
       self.velocity = self.velocity.reflect_horizontally
     end
@@ -27,16 +26,16 @@ end
 
 player_paddle = Paddle.new do
   set_name 'player_paddle'
-  
+
   set_color Arcade::Color::WHITE
-  
+
   set_x_position 10
   set_y_position 10
-  
+
   on_keypress Arcade::Keyboard::KeyW do
     if self.top > 0
       move_up 10
-    end  
+    end
   end
 
   on_keypress Arcade::Keyboard::KeyS do
@@ -46,18 +45,20 @@ player_paddle = Paddle.new do
   end
 
   on_collides_with Ball do |ball|
+    get_object('opponent_paddle').score!
+
     ball.velocity = ball.velocity.reflect_horizontally
   end
 end
 
 opponent_paddle = Paddle.new do
   set_name 'opponent_paddle'
-  
+
   set_color Arcade::Color::RED
-  
-  set_x_position $main_window.width - config.width - 10
+
+  set_x_position $main_window.width - self.width - 10
   set_y_position 10
-  
+
   on_keypress Arcade::Keyboard::KeyUp do
     if self.top > 0
       move_up 10
@@ -71,14 +72,14 @@ opponent_paddle = Paddle.new do
   end
 
   on_collides_with Ball do |ball|
+    get_object('player_paddle').score!
+
     ball.velocity = ball.velocity.reflect_horizontally
   end
 end
 
-
 $main_window.register player_paddle
 $main_window.register opponent_paddle
 $main_window.register ball
-
 
 $main_window.show
