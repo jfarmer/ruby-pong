@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'gosu'
-$:.push('./lib')
 require 'ruby-pong'
 
 include Pong
