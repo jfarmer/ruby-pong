@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'gosu'
 require 'ruby-pong'
 
 include Pong
@@ -11,15 +12,77 @@ ball = Ball.new do
   set_x_position 100
   set_y_position 200
 
-  set_velocity Arcade::Velocity[5,7]
+  set_velocity Arcade::Velocity[7,8]
 
   on_hit_edge do |edge|
-    if edge == :top or edge == :bottom
-      self.velocity = self.velocity.reflect_vertically
+    player_paddle   = get_object('player_paddle')
+    opponent_paddle = get_object('opponent_paddle')
+    if edge == :top
+      set_y_position 10
+
+      set_velocity velocity.reflect_vertically
     end
 
-    if edge == :left or edge == :right
-      self.velocity = self.velocity.reflect_horizontally
+    if edge == :bottom
+      set_y_position 590
+
+      set_velocity velocity.reflect_vertically
+    end
+
+    if edge == :left
+      opponent_paddle.set_score opponent_paddle.score + 1
+      puts "Score: Player: %d, Opponent: %d" % [player_paddle.score, opponent_paddle.score]
+
+      if opponent_paddle.score >= 5
+        puts "Opponent wins!"
+
+        player_paddle.set_score 0
+        opponent_paddle.set_score 0
+
+        set_x_position 400
+        set_y_position 300
+        set_velocity Arcade::Velocity::ZERO
+      else
+        set_x_position 10
+        set_velocity velocity.reflect_horizontally
+      end
+    end
+
+    if edge == :right
+      player_paddle.set_score player_paddle.score + 1
+      puts "Score: Player: %d, Opponent: %d" % [player_paddle.score, opponent_paddle.score]
+
+      if player_paddle.score >= 5
+        puts "Player wins!"
+
+        player_paddle.set_score 0
+        opponent_paddle.set_score 0
+
+        set_x_position 400
+        set_y_position 300
+        set_velocity Arcade::Velocity::ZERO
+      else
+        set_x_position 790
+        set_velocity velocity.reflect_horizontally
+      end
+
+    end
+  end
+
+  on_collides_with Paddle do |paddle|
+    if paddle.hit_side == :left or paddle.hit_side == :right
+      # If the ball hit the left or right side of the paddle
+      # bounce away horizontally
+      set_velocity velocity.reflect_horizontally
+    else
+      # If we hit the top or bottom, bounce away vertically
+      set_velocity velocity.reflect_vertically
+    end
+  end
+
+  on_keypress Arcade::Keyboard::KeySpace do
+    if velocity.zero?
+      set_velocity Arcade::Velocity[7,8]
     end
   end
 end
@@ -44,11 +107,18 @@ player_paddle = Paddle.new do
     end
   end
 
-  on_collides_with Ball do |ball|
-    get_object('opponent_paddle').score!
-
-    ball.velocity = ball.velocity.reflect_horizontally
+  on_keypress Arcade::Keyboard::KeyD do
+    if self.right < 400
+      move_right 10
+    end
   end
+
+  on_keypress Arcade::Keyboard::KeyA do
+    if self.left > 0
+      move_left 10
+    end
+  end
+
 end
 
 opponent_paddle = Paddle.new do
@@ -56,7 +126,7 @@ opponent_paddle = Paddle.new do
 
   set_color Arcade::Color::RED
 
-  set_x_position $main_window.width - self.width - 10
+  set_x_position 780
   set_y_position 10
 
   on_keypress Arcade::Keyboard::KeyUp do
@@ -71,10 +141,16 @@ opponent_paddle = Paddle.new do
     end
   end
 
-  on_collides_with Ball do |ball|
-    get_object('player_paddle').score!
+  on_keypress Arcade::Keyboard::KeyRight do
+    if self.right < 800
+      move_right 10
+    end
+  end
 
-    ball.velocity = ball.velocity.reflect_horizontally
+  on_keypress Arcade::Keyboard::KeyLeft do
+    if self.left > 400
+      move_left 10
+    end
   end
 end
 

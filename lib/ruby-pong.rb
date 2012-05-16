@@ -4,8 +4,8 @@ require 'ruby-pong/version'
 module Pong
   class Paddle < Arcade::GameObject
     set_defaults do
-      set_width  15
-      set_height 100
+      self.width  = 15
+      self.height =  100
 
       set_score 0
     end
@@ -19,8 +19,8 @@ module Pong
 
   class Ball < Arcade::GameObject
     set_defaults do
-      set_width  10
-      set_height 10
+      self.width =   10
+      self.height =  10
     end
   end
 end
