@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'gosu'
+$:.push('./lib')
 require 'ruby-pong'
 
 include Pong
@@ -119,6 +120,17 @@ player_paddle = Paddle.new do
     end
   end
 
+  on_keypress Arcade::Keyboard::KeyZ do
+    set_color Arcade::Color::RED
+  end
+
+  on_keypress Arcade::Keyboard::KeyX do
+    set_color Arcade::Color::GREEN
+  end
+
+  on_keypress Arcade::Keyboard::KeyC do
+    set_color Arcade::Color::BLUE
+  end
 end
 
 opponent_paddle = Paddle.new do
